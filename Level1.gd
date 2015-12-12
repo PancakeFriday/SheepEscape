@@ -21,7 +21,7 @@ func _ready():
 	set_process(true)
 	scene = load("res://sheep.scn")
 	
-	for i in range(0,6):
+	for i in range(0,2):
 		randomize()
 		var j = first_free_key()
 		sheep.append(scene.instance())

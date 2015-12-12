@@ -28,10 +28,20 @@ func _input(ev):
 	if get_node("Sheep").sexywait > 0 or area.get_node("Sheep").sexywait > 0:
 		return
 		
+	var anmNode = get_node("Sheep/Movement")
+	var curAn = anmNode.get_current_animation()
+	print(curAn)
+	if curAn == "jump_l" or curAn == "jump_r": # this is the first guy
+		return
+	var anmNode = area.get_node("Sheep/Movement")
+	var curAn = anmNode.get_current_animation()
+	if curAn == "jump_l" or curAn == "jump_r": # this is the second guy
+		return
+		
 	if ev.is_pressed() and ev.type == InputEvent.KEY:
 		print(ev.scancode)
 
-	if ev.is_pressed() and (ev.scancode == get_node("Sheep").s1 or ev.scancode == area.get_node("Sheep").s1):
+	if ev.is_pressed() and ev.type == InputEvent.KEY and (ev.scancode == get_node("Sheep").s1 or ev.scancode == area.get_node("Sheep").s1):
 		if area.get_node("Sheep").sexytime:
 			get_node("Sheep").sexytime = true
 			get_node("Sheep").sexywait = 10
@@ -39,6 +49,9 @@ func _input(ev):
 		else:
 			get_node("Sheep").sexytime = true
 			get_node("Sheep").sexywait = 10
+			area.get_node("Sheep").sexytime = true
+			area.get_node("Sheep").sexywait = 10
+			area.get_node("Sheep").hide()
 		pass
 
 func _on_SheepCollider_area_enter( a ):
