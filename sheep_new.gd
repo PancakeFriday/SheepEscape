@@ -1,13 +1,18 @@
 
 extends KinematicBody2D
 
+# member variables here, example:
+# var a=2
+# var b="textvar"
+
 func _ready():
+	# Initialization here
 	set_fixed_process(true)
 	pass
 
 var mirror = 1
 func _fixed_process(delta):
-	var anmNode = get_node("SheepCollider").get_node("Sheep").get_node("Movement")
+	var anmNode = get_node("Sheep").get_node("Movement")
 	var num = rand_range(0,5)
 	var eating = false
 	if num > 4:
@@ -27,10 +32,11 @@ func _fixed_process(delta):
 	
 	# sheep aint movin while eatin'
 	var curAn = anmNode.get_current_animation()
-	if (curAn == "move_l" or curAn == "move_r") and get_node("SheepCollider/Sheep").sexytime <= 0:
+	if curAn == "move_l" or curAn == "move_r":
 		var speed = 200
 		var pos = get_pos()
 		if is_colliding():
+			print("ya")
 			if get_collider().get_type() == "StaticBody2D":
 				mirror *= -1
 
