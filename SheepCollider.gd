@@ -46,12 +46,16 @@ func _input(ev):
 			get_node("Sheep").sexytime = true
 			get_node("Sheep").sexywait = 10
 			get_node("Sheep").hide()
+			get_node("Sheep").layedegg = true
+			area.get_node("Sheep").layedegg = false
 		else:
 			get_node("Sheep").sexytime = true
 			get_node("Sheep").sexywait = 10
 			area.get_node("Sheep").sexytime = true
 			area.get_node("Sheep").sexywait = 10
 			area.get_node("Sheep").hide()
+			area.get_node("Sheep").layedegg = true
+			get_node("Sheep").layedegg = false
 		pass
 
 func _on_SheepCollider_area_enter( a ):
