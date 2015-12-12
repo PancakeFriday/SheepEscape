@@ -29,6 +29,5 @@ func _process(delta):
 		dir = Vector2((speeds[i]*delta*f),0)
 		if pos.x > 700:
 			pos.x -= 1400
-		print(pos.x)
 		get_child(i).set_pos(pos+dir)
 	pass
