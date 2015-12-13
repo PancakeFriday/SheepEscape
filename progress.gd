@@ -8,7 +8,6 @@ extends RichTextLabel
 func _ready():
 	# Initialization here
 	add_text("0/10")
-	pass
 	
 func set_value(v,k):
 	clear()

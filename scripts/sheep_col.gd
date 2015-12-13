@@ -33,21 +33,19 @@ func _fixed_process(delta):
 	var curAn = anmNode.get_current_animation()
 
 	if is_colliding():
-		print(get_collision_normal())
 		if get_collision_normal().y > -0.6: #not a ground collision
 			if get_collider().get_type() == "StaticBody2D":
 				mirror *= -1
 		if get_collision_normal().y > 0.6: #ceiling
 			anmNode.stop()
 			anmNode.play("falling")
-			print("ya")
 
 	# falling down
 	if curAn != "jump_l" and curAn != "jump_r":
 		var hspeed = 200
 		if vspeed <= 100:
 			vspeed = 100
-		vspeed += 270*delta
+		vspeed += 200*delta
 		
 		var x = mirror*delta*hspeed
 		var y = delta*vspeed
@@ -64,7 +62,9 @@ func _fixed_process(delta):
 			
 			move(Vector2(x,y))
 		else:
-			vspeed -= 270*delta
+			vspeed = 250
+			if curAn == "falling_l" or curAn == "falling_r":
+				anmNode.stop()
 
 	if not anmNode.is_playing():
 		# sexy time is over
@@ -82,13 +82,15 @@ func _fixed_process(delta):
 			else:
 				anmNode.play("move_l")
 			
-	if (curAn == "move_l" or curAn == "move_r"):
+	if curAn == "move_l" or curAn == "move_r":
 		var speed = get_node("SheepCollider/Sheep").speed
-		vspeed = 250
-
-		var dir = Vector2(mirror*delta*speed*((anmNode.get_current_animation_pos())+0.3),0)
+		
+		var dir = Vector2(mirror*delta*speed*(anmNode.get_current_animation_pos()+0.4),0)
 		move(dir)
 	
+	if curAn == "move_l" or curAn == "move_r" or curAn == "eat_l" or curAn == "eat_r":
+		vspeed = 250
+
 	# jump takes 1s
 	if curAn == "jump_l" or curAn == "jump_r":
 		var hspeed = 200
@@ -109,8 +111,11 @@ func _input(ev):
 	if get_node("SheepCollider/Sheep").jumpwait > 0:
 		return
 
-	if ev.is_pressed() and ev.type == InputEvent.KEY and ev.scancode == get_node("SheepCollider/Sheep").s2:
+	if ev.is_pressed() and ev.type == InputEvent.KEY and ev.scancode == get_node("SheepCollider/Sheep").s2 and not ev.is_echo():
 		get_node("SheepCollider/Sheep").jumpwait = 0
+		randomize()
+		var rand = randi()%5+1
+		get_node("SheepCollider/Sheep/Samples").play(str(rand))
 		if mirror == 1:
 			anmNode.play("jump_r")
 		else:

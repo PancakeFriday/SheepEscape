@@ -29,7 +29,7 @@ func _process(delta):
 	if instr_time > 0:
 		instr_time -= delta
 		if instr_time <= 0:
-			get_tree().change_scene("res://Level1.scn")
+			get_tree().change_scene("res://Tutorial.scn")
 	
 	if sheep.get_node("KinematicBody2D/SheepCollider").menu_start > 0:
 		sheep.get_node("KinematicBody2D/SheepCollider").menu_start -= delta

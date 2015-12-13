@@ -31,16 +31,16 @@ func _ready():
 	var j = first_free_key()
 	sheep.append(scene.instance())
 	sheep[0].get_node("KinematicBody2D/SheepCollider/Sheep").setKeys(keys[j],keys[j+1], scans[j], scans[j+1])
-	sheep[0].get_node("KinematicBody2D").setDir(-1)
-	sheep[0].set_pos(Vector2(rand_range(70,300),316.5))
+	sheep[0].get_node("KinematicBody2D").setDir(1)
+	sheep[0].set_pos(Vector2(220,316.5))
 	sheep[0].set_z(1)
 	add_child(sheep[0])
 	
 	var j = first_free_key()
 	sheep.append(scene.instance())
 	sheep[1].get_node("KinematicBody2D/SheepCollider/Sheep").setKeys(keys[j],keys[j+1], scans[j], scans[j+1])
-	sheep[1].get_node("KinematicBody2D").setDir(1)
-	sheep[1].set_pos(Vector2(rand_range(500,600),316.5))
+	sheep[1].get_node("KinematicBody2D").setDir(-1)
+	sheep[1].set_pos(Vector2(400,316.5))
 	sheep[1].set_z(1)
 	add_child(sheep[1])
 	
@@ -68,7 +68,7 @@ func _process(delta):
 	if clearTime > 0:
 		clearTime -= delta
 		if clearTime <= 0:
-			get_tree().change_scene("res://Level2.scn")
+			get_tree().change_scene("res://main.scn")
 		
 	if sheep.size() + eggs.size() < 2 and exits + sheep.size() + eggs.size() < max_sheep and not gameOverInst:
 		gameOverScene = load("res://gameover.scn")
@@ -82,7 +82,8 @@ func _process(delta):
 		clearInst = clearScene.instance()
 		clearInst.set_pos(Vector2(350,150))
 		add_child(clearInst)
-		clearTime = 2
+		get_node("finish").show()
+		clearTime = 3
 
 	get_node("background/progress/progress").set_value(float(exits),max_sheep)
 

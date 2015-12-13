@@ -27,11 +27,13 @@ func _input(ev):
 	var anmNode = get_node("Sheep/Movement")
 		
 	if area.get_node("sheep_static/sheep_menu") and not anmNode.get_current_animation() == "sexytime":
-		anmNode.play("sexytime")
-		area.hide()
-		menu_start = 1.5
-		return
-	elif area.get_node("sheep_static/sheep_menu"):
+		if ev.is_pressed() and ev.type == InputEvent.KEY and (ev.scancode == get_node("Sheep").s1):
+			anmNode.play("sexytime")
+			area.hide()
+			menu_start = 1.5
+			return
+	
+	if area.get_node("sheep_static/sheep_menu"):
 		return
 	
 	if not area.get_node("Sheep").k1:
@@ -44,14 +46,15 @@ func _input(ev):
 	var curAn = anmNode.get_current_animation()
 	if curAn == "jump_l" or curAn == "jump_r": # this is the first guy
 		return
+	if curAn == "falling_l" or curAn == "falling_r": # this is the first guy
+		return
 	var anmNode = area.get_node("Sheep/Movement")
 	var curAn = anmNode.get_current_animation()
 	if curAn == "jump_l" or curAn == "jump_r": # this is the second guy
 		return
+	if curAn == "falling_l" or curAn == "falling_r": # this is the first guy
+		return
 		
-	if ev.is_pressed() and ev.type == InputEvent.KEY:
-		print(ev.scancode)
-
 	if ev.is_pressed() and ev.type == InputEvent.KEY and (ev.scancode == get_node("Sheep").s1 or ev.scancode == area.get_node("Sheep").s1):
 		if area.get_node("Sheep").sexytime:
 			get_node("Sheep").sexytime = true

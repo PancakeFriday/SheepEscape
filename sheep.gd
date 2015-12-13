@@ -22,7 +22,7 @@ var egg_scene
 func _ready():
 	set_fixed_process(true)
 	egg_scene = load("res://egg.scn")
-	speed = rand_range(300,340)
+	speed = rand_range(250,270)
 	pass
 
 func _fixed_process(delta):
@@ -36,10 +36,9 @@ func _fixed_process(delta):
 		var Level = get_node("../../../../")
 		var eggs = Level.eggs
 		eggs.append(egg_scene.instance())
-		var pos = get_pos() + get_parent().get_pos() + get_node("../../").get_pos() + get_node("../../../").get_pos() + Vector2(0,5)
+		var pos = get_pos() + get_parent().get_pos() + get_node("../../").get_pos() + get_node("../../../").get_pos() + Vector2(0,2)
 		eggs[eggs.size()-1].set_pos(pos)
 		eggs[eggs.size()-1].get_node("Egg/egganim").play("hatch")
-		print(eggs[eggs.size()-1].get_pos())
 		Level.add_child(eggs[eggs.size()-1])
 		layedegg = true
 		

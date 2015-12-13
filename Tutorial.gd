@@ -6,7 +6,7 @@ var sheep = []
 var eggs = []
 var exits = 0 # number of sheep that exited the map
 
-var max_sheep = 5
+var max_sheep = 1
 
 var keys = ["q","w","a","s","e","r","d","f","t","z","g","h"]
 var scans = [KEY_Q, KEY_W, KEY_A, KEY_S, KEY_E, KEY_R, KEY_D, KEY_F, KEY_T, KEY_Z, KEY_G, KEY_H]
@@ -36,14 +36,6 @@ func _ready():
 	sheep[0].set_z(1)
 	add_child(sheep[0])
 	
-	var j = first_free_key()
-	sheep.append(scene.instance())
-	sheep[1].get_node("KinematicBody2D/SheepCollider/Sheep").setKeys(keys[j],keys[j+1], scans[j], scans[j+1])
-	sheep[1].get_node("KinematicBody2D").setDir(1)
-	sheep[1].set_pos(Vector2(rand_range(500,600),316.5))
-	sheep[1].set_z(1)
-	add_child(sheep[1])
-	
 	get_node("background/progress/progress").set_value(0,max_sheep)
 	
 var gameOverScene
@@ -52,13 +44,40 @@ var gameOverTime = 0
 var clearScene
 var clearInst
 var clearTime = 0
+var dialoguetime = 0
+var spawnsheep = false
+var removecrate = false
 func _process(delta):
-	if ready > 0:
-		ready -= delta
-		get_tree().set_pause(true)
-		return
-	else:
-		get_tree().set_pause(false)
+	var dia = get_node("dialogue/label")
+	dialoguetime += delta
+	if dialoguetime < 5:
+		dia.set(0)
+	elif dialoguetime < 10:
+		dia.set(1)
+	elif dialoguetime < 15:
+		dia.set(2)
+		if not spawnsheep:
+			var j = first_free_key()
+			sheep.append(scene.instance())
+			sheep[1].get_node("KinematicBody2D/SheepCollider/Sheep").setKeys(keys[j],keys[j+1], scans[j], scans[j+1])
+			sheep[1].get_node("KinematicBody2D").setDir(-1)
+			sheep[1].set_pos(Vector2(rand_range(70,300),316.5))
+			sheep[1].set_z(1)
+			add_child(sheep[1])
+			spawnsheep=true
+	elif dialoguetime < 20:
+		dia.set(3)
+	elif dialoguetime < 25:
+		dia.set(4)
+	elif dialoguetime < 30:
+		dia.set(5)
+	elif dialoguetime < 35:
+		dia.set(6)
+		max_sheep = 3
+		if not removecrate:
+			remove_child(get_node("crate_mid"))
+			remove_child(get_node("crate_top"))
+			removecrate = true
 		
 	if gameOverTime > 0:
 		gameOverTime -= delta
@@ -68,7 +87,7 @@ func _process(delta):
 	if clearTime > 0:
 		clearTime -= delta
 		if clearTime <= 0:
-			get_tree().change_scene("res://Level2.scn")
+			get_tree().change_scene("res://Level1.scn")
 		
 	if sheep.size() + eggs.size() < 2 and exits + sheep.size() + eggs.size() < max_sheep and not gameOverInst:
 		gameOverScene = load("res://gameover.scn")
