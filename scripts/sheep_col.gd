@@ -5,10 +5,13 @@ var ev
 func _ready():
 	set_fixed_process(true)
 	set_process_input(true)
+	
+	var anmNode = get_node("SheepCollider/Sheep").get_node("Movement")
+	anmNode.play("eat_r")
 	pass
 
 var mirror = 1
-var vspeed = 2000
+var vspeed = 250
 func _fixed_process(delta):
 	# display keys
 	if get_node("SheepCollider/Sheep").k1:
@@ -25,10 +28,46 @@ func _fixed_process(delta):
 	if get_node("SheepCollider/Sheep").sexytime:
 		anmNode.play("sexytime")
 		get_node("SheepCollider/Sheep").sexytime = false
+	
+	# sheep aint movin while eatin'
+	var curAn = anmNode.get_current_animation()
+
+	if is_colliding():
+		print(get_collision_normal())
+		if get_collision_normal().y > -0.6: #not a ground collision
+			if get_collider().get_type() == "StaticBody2D":
+				mirror *= -1
+		if get_collision_normal().y > 0.6: #ceiling
+			anmNode.stop()
+			anmNode.play("falling")
+			print("ya")
+
+	# falling down
+	if curAn != "jump_l" and curAn != "jump_r":
+		var hspeed = 200
+		if vspeed <= 100:
+			vspeed = 100
+		vspeed += 270*delta
+		
+		var x = mirror*delta*hspeed
+		var y = delta*vspeed
+		
+		var dir = Vector2(0,y)
+		
+		# actually falling
+		if not test_move(dir):
+			#if not anmNode.is_playing():
+			if mirror == 1:
+				anmNode.play("falling_r")
+			else:
+				anmNode.play("falling_l")
+			
+			move(Vector2(x,y))
+		else:
+			vspeed -= 270*delta
 
 	if not anmNode.is_playing():
 		# sexy time is over
-		vspeed = 200
 		get_node("SheepCollider/Sheep").show()
 		
 		# sometimes, a sheep just wants to eat
@@ -42,29 +81,20 @@ func _fixed_process(delta):
 				anmNode.play("eat_l")
 			else:
 				anmNode.play("move_l")
-
-	if is_colliding():
-		if get_collision_normal().y > -0.6: #not a ground collision
-			if get_collider().get_type() == "StaticBody2D":
-				mirror *= -1
-	
-	# sheep aint movin while eatin'
-	var curAn = anmNode.get_current_animation()
+			
 	if (curAn == "move_l" or curAn == "move_r"):
-		var speed = 200
-		var pos = get_pos()
+		var speed = get_node("SheepCollider/Sheep").speed
+		vspeed = 250
 
-		if anmNode.get_current_animation_pos() > 0.25:
-			if anmNode.get_current_animation_pos() < 0.65:
-				var dir = Vector2(mirror*delta*speed,0)
-				move(dir)
+		var dir = Vector2(mirror*delta*speed*((anmNode.get_current_animation_pos())+0.3),0)
+		move(dir)
 	
 	# jump takes 1s
 	if curAn == "jump_l" or curAn == "jump_r":
 		var hspeed = 200
-		vspeed -= 500*delta
+		vspeed -= 270*delta
 		
-		var dir = Vector2(mirror*delta*hspeed,-delta*vspeed-0.5*delta)
+		var dir = Vector2(mirror*delta*hspeed,-delta*vspeed)
 		move(dir)
 	
 func _input(ev):
@@ -72,11 +102,15 @@ func _input(ev):
 	var curAn = anmNode.get_current_animation()
 	if curAn == "sexytime":
 		return
+	if curAn == "falling_l" or curAn == "falling_r":
+		return
+	if curAn == "jump_l" or curAn == "jump_r":
+		return
 	if get_node("SheepCollider/Sheep").jumpwait > 0:
 		return
 
 	if ev.is_pressed() and ev.type == InputEvent.KEY and ev.scancode == get_node("SheepCollider/Sheep").s2:
-		get_node("SheepCollider/Sheep").jumpwait = 5
+		get_node("SheepCollider/Sheep").jumpwait = 0
 		if mirror == 1:
 			anmNode.play("jump_r")
 		else:

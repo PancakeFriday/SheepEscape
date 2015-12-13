@@ -16,10 +16,13 @@ var k2
 var s1
 var s2
 
+var speed
+
 var egg_scene
 func _ready():
 	set_fixed_process(true)
 	egg_scene = load("res://egg.scn")
+	speed = rand_range(300,340)
 	pass
 
 func _fixed_process(delta):

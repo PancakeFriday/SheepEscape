@@ -8,6 +8,7 @@ extends Area2D
 var ev
 var doSexyTime
 var area
+var menu_start = 0
 func _ready():
 	# Initialization here
 	doSexyTime = false
@@ -22,15 +23,25 @@ func _input(ev):
 		return
 	if not area:
 		return
+		
+	var anmNode = get_node("Sheep/Movement")
+		
+	if area.get_node("sheep_static/sheep_menu") and not anmNode.get_current_animation() == "sexytime":
+		anmNode.play("sexytime")
+		area.hide()
+		menu_start = 1.5
+		return
+	elif area.get_node("sheep_static/sheep_menu"):
+		return
+	
 	if not area.get_node("Sheep").k1:
 		return
+		
 		
 	if get_node("Sheep").sexywait > 0 or area.get_node("Sheep").sexywait > 0:
 		return
 		
-	var anmNode = get_node("Sheep/Movement")
 	var curAn = anmNode.get_current_animation()
-	print(curAn)
 	if curAn == "jump_l" or curAn == "jump_r": # this is the first guy
 		return
 	var anmNode = area.get_node("Sheep/Movement")
@@ -44,26 +55,33 @@ func _input(ev):
 	if ev.is_pressed() and ev.type == InputEvent.KEY and (ev.scancode == get_node("Sheep").s1 or ev.scancode == area.get_node("Sheep").s1):
 		if area.get_node("Sheep").sexytime:
 			get_node("Sheep").sexytime = true
-			get_node("Sheep").sexywait = 10
+			get_node("Sheep").sexywait = 3
 			get_node("Sheep").hide()
 			get_node("Sheep").layedegg = true
 			area.get_node("Sheep").layedegg = false
 		else:
 			get_node("Sheep").sexytime = true
-			get_node("Sheep").sexywait = 10
+			get_node("Sheep").sexywait = 3
 			area.get_node("Sheep").sexytime = true
-			area.get_node("Sheep").sexywait = 10
+			area.get_node("Sheep").sexywait = 3
 			area.get_node("Sheep").hide()
 			area.get_node("Sheep").layedegg = true
 			get_node("Sheep").layedegg = false
 		pass
 
 func _on_SheepCollider_area_enter( a ):
-	doSexyTime = true
-	area = a
+	randomize()
+	var ran = randi() % 2
+	if ran == 1 or a.get_node("sheep_static/sheep_menu"): #always sexytime in the menu
+		doSexyTime = true
+		area = a
+		get_node("hearts").show()
+		get_node("hearts/hearts/heartsanim").play("love")
 
 
 func _on_SheepCollider_area_exit( a ):
 	doSexyTime = false
 	area = a
+	get_node("hearts").hide()
+	get_node("hearts/hearts/heartsanim").stop()
 	pass # replace with function body
